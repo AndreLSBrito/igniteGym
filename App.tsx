@@ -1,10 +1,11 @@
-import { View, StatusBar } from 'react-native';
+import { StatusBar } from 'react-native';
 import { NativeBaseProvider } from 'native-base'
 import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto';
 
+import { Routes } from './src/routes/index';
+
 import {THEME} from './src/theme'
 import { Loading } from '@components/Loading';
-import { Routes } from './src/routes/index';
 
 
 export default function App() {
