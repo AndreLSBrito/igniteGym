@@ -1,13 +1,13 @@
 import * as yup from 'yup'
+import { yupResolver} from '@hookform/resolvers/yup'
 import { useForm, Controller } from 'react-hook-form'
 import { useNavigation } from '@react-navigation/native'
 import { VStack, Image, Text, Center, Heading, ScrollView} from 'native-base'
-import { yupResolver} from '@hookform/resolvers/yup'
 
 import LogoSvg from '@assets/logo.svg'
-import BackgroundImg from '@assets/background.png'
 import { Input } from '@components/Input'
 import { Button } from '@components/Button'
+import BackgroundImg from '@assets/background.png'
 
 type FormDataProps ={
   name:string;

@@ -1,7 +1,10 @@
+import * as yup from 'yup'
 import { useState } from 'react';
-import { TouchableOpacity } from 'react-native';
 import * as FileSystem from 'expo-file-system';
+import { TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker'
+import { useForm, Controller} from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { Center, ScrollView, VStack, Skeleton, Text, Heading, useToast} from 'native-base'
 
 import { ScreenHeader } from '@components/ScreenHeader'
@@ -9,11 +12,29 @@ import { UserPhoto } from '@components/UserPhoto'
 import { Button } from '@components/Button';
 import { Input } from '@components/Input';
 
+type FormProfileProps ={
+  name: string;
+  password: string;
+  newPassword: string;
+  newPassword_confirm: string;
+}
+
 const PHOTO_SIZE = 33;
+
+const profileSchema = yup.object({
+  name: yup.string().required('Informe o nome.'),
+  password: yup.string().required('Informe a senha.'),
+  newPassword: yup.string().required('Informe a nova senha.'),
+  newPassword_confirm: yup.string().required('A confirmação da senha não confere')
+})
+
 
 export function Profile(){
   const [photoIsLoading, setPhotoIsLoading] = useState(false)
   const [userPhoto,setUserPhoto] = useState('https://github.com/Tiotedd.png')
+  const { control, handleSubmit, formState:{errors} } = useForm<FormProfileProps>({
+    resolver: yupResolver(profileSchema)
+  })
 
   const toast = useToast()
 
@@ -54,6 +75,10 @@ export function Profile(){
     }
   }
 
+  function handleProfileUpdate(){
+
+  }
+
   return(
     <VStack flex={1}>
       <ScreenHeader title="Perfil"/>
@@ -84,9 +109,18 @@ export function Profile(){
             </Text>
           </TouchableOpacity>
 
-          <Input
-            bg="gray.600"
-            placeholder="Nome"
+          <Controller
+            control={control}
+            name="name"
+            render={({field:{value, onChange}}) => (
+              <Input
+                value={value}
+                onChangeText={onChange}
+                bg="gray.600"
+                placeholder="Nome"
+                errorMessage={errors.name?.message}
+              />
+            )}
           />
 
           <Input
@@ -100,27 +134,54 @@ export function Profile(){
             Alterar senha
           </Heading>
 
-          <Input
-            bg="gray.600"
-            placeholder="Senha antiga"
-            secureTextEntry
+          <Controller
+            control={control}
+            name="password"
+            render={({field:{value, onChange}}) => (
+              <Input
+                value={value}
+                onChangeText={onChange}
+                bg="gray.600"
+                placeholder="Senha antiga"
+                errorMessage={errors.password?.message}
+                secureTextEntry
+              />
+            )}
           />
-
-          <Input
-            bg="gray.600"
-            placeholder="Senha nova"
-            secureTextEntry
+     
+          <Controller
+            control={control}
+            name="newPassword"
+            render={({field:{value, onChange}}) => (
+              <Input
+                value={value}
+                onChangeText={onChange}
+                bg="gray.600"
+                placeholder="Senha nova"
+                errorMessage={errors.newPassword?.message}
+                secureTextEntry
+              />
+            )}
           />
-
-          <Input
-            bg="gray.600"
-            placeholder="Confirme a nova senha"
-            secureTextEntry
+          <Controller
+            control={control}
+            name="newPassword_confirm"
+            render={({field:{value, onChange}}) => (
+              <Input
+                value={value}
+                onChangeText={onChange}
+                bg="gray.600"
+                placeholder="Confirme a nova senha"
+                errorMessage={errors.newPassword_confirm?.message}
+                secureTextEntry
+              />
+            )}
           />
 
           <Button
             title="Atualizar"
             mt={4}
+            onPress={handleSubmit(handleProfileUpdate)}
           />
         </Center>
       </ScrollView>
