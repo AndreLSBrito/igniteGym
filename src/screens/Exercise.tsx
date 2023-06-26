@@ -65,7 +65,7 @@ export function Exercise(){
       await api.post('/history', {exercise_id: exerciseId})
 
       toast.show({
-        title: 'Parabéns! Exercício registrado no seu histórico',
+        title: 'Parabéns! Exercício registrado no seu histórico.',
         placement: 'top',
         bgColor: 'green.700'
       })
