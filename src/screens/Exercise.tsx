@@ -17,12 +17,14 @@ import { AppError } from '@utils/AppError'
 import { ExerciseDTO } from '@dtos/ExerciseDTO'
 
 import { AppNavigatorRoutesProps } from '@routes/app.routes'
+import { Loading } from '@components/Loading'
 
 type RouteParamsProps = {
   exerciseId: string;
 }
 
 export function Exercise(){
+  const [isLoading, setIsLoading] = useState(true)
   const [exercise, setExercise] = useState<ExerciseDTO>({} as ExerciseDTO)
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
@@ -37,6 +39,7 @@ export function Exercise(){
 
   async function fetchExerciseDetails(){
     try {
+      setIsLoading(true)
       const response = await api.get(`/exercises/${exerciseId}`)
       setExercise(response.data)
 
@@ -49,6 +52,8 @@ export function Exercise(){
         placement: 'top',
         bgColor: 'red.500'
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -82,41 +87,42 @@ export function Exercise(){
           </HStack>
         </VStack>
 
-      
-      <VStack p={8}>
-        <Box rounded="lg" mb={3} overflow="hidden">
-          <Image
-            w="full"
-            h={80}
-            source={{uri: `${api.defaults.baseURL}/exercise/demo/${exercise.demo}`}}
-            alt="Nome do exercício"
-            resizeMode="cover"
-          />
-        </Box>
+      { isLoading ? <Loading/> :
+        <VStack p={8}>
+          <Box rounded="lg" mb={3} overflow="hidden">
+            <Image
+              w="full"
+              h={80}
+              source={{uri: `${api.defaults.baseURL}/exercise/demo/${exercise.demo}`}}
+              alt="Nome do exercício"
+              resizeMode="cover"
+            />
+          </Box>
 
-        <Box bg="gray.600" rounded="md" pb={4} px={4}>
-          <HStack alignContent="center" justifyContent="space-around" mb={6} mt={5}>
-            <HStack>
-              <SeriesSvg/>
-              <Text color="gray.200" ml={2}>
-                {exercise.series} séries
-              </Text>
+          <Box bg="gray.600" rounded="md" pb={4} px={4}>
+            <HStack alignContent="center" justifyContent="space-around" mb={6} mt={5}>
+              <HStack>
+                <SeriesSvg/>
+                <Text color="gray.200" ml={2}>
+                  {exercise.series} séries
+                </Text>
+              </HStack>
+
+              <HStack>
+                <RepetitionSvg/>
+                <Text color="gray.200" ml={2}>
+                  {exercise.repetitions} repetições
+                </Text>
+              </HStack>
             </HStack>
 
-            <HStack>
-              <RepetitionSvg/>
-              <Text color="gray.200" ml={2}>
-                {exercise.repetitions} repetições
-              </Text>
-            </HStack>
-          </HStack>
-
-          <Button
-            title="Marcas como realizado"
-          />
-          
-        </Box>
-      </VStack>
+            <Button
+              title="Marcas como realizado"
+            />
+            
+          </Box>
+        </VStack>
+      }
      
     </VStack>
   )
