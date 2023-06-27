@@ -11,9 +11,11 @@ import { ScreenHeader } from '@components/ScreenHeader'
 import { UserPhoto } from '@components/UserPhoto'
 import { Button } from '@components/Button';
 import { Input } from '@components/Input';
+import { useAuth } from '@hooks/useAuth';
 
 type FormProfileProps ={
   name: string;
+  email:string;
   password: string;
   newPassword: string;
   newPassword_confirm: string;
@@ -28,11 +30,15 @@ const profileSchema = yup.object({
   newPassword_confirm: yup.string().required('A confirmação da senha não confere')
 })
 
-
 export function Profile(){
+  const {user} = useAuth()
   const [photoIsLoading, setPhotoIsLoading] = useState(false)
   const [userPhoto,setUserPhoto] = useState('https://github.com/Tiotedd.png')
   const { control, handleSubmit, formState:{errors} } = useForm<FormProfileProps>({
+    defaultValues: {
+      name: user.name,
+      email: user.email
+    },
     resolver: yupResolver(profileSchema)
   })
 
@@ -75,7 +81,7 @@ export function Profile(){
     }
   }
 
-  function handleProfileUpdate(){
+  function handleProfileUpdate(data: FormProfileProps){
 
   }
 
@@ -123,11 +129,17 @@ export function Profile(){
             )}
           />
 
-          <Input
-            bg="gray.600"
-            placeholder="Email"
-            value="andreluisx2009@yahoo.com.br"
-            isDisabled
+          <Controller
+          control={control}
+          name="email"
+          render={({ field: {value}}) => (
+            <Input
+              bg="gray.600"
+              placeholder="Email"
+              value={value}
+              isDisabled
+            />
+          )}
           />
 
           <Heading color="gray.200" fontSize="md" mb={2} alignSelf="flex-start" mt={12} fontFamily="heading">
@@ -137,9 +149,8 @@ export function Profile(){
           <Controller
             control={control}
             name="password"
-            render={({field:{value, onChange}}) => (
+            render={({field:{ onChange}}) => (
               <Input
-                value={value}
                 onChangeText={onChange}
                 bg="gray.600"
                 placeholder="Senha antiga"
@@ -152,9 +163,8 @@ export function Profile(){
           <Controller
             control={control}
             name="newPassword"
-            render={({field:{value, onChange}}) => (
+            render={({field:{onChange}}) => (
               <Input
-                value={value}
                 onChangeText={onChange}
                 bg="gray.600"
                 placeholder="Senha nova"
@@ -166,9 +176,8 @@ export function Profile(){
           <Controller
             control={control}
             name="newPassword_confirm"
-            render={({field:{value, onChange}}) => (
+            render={({field:{ onChange}}) => (
               <Input
-                value={value}
                 onChangeText={onChange}
                 bg="gray.600"
                 placeholder="Confirme a nova senha"
