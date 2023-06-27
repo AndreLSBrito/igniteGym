@@ -25,9 +25,19 @@ const PHOTO_SIZE = 33;
 
 const profileSchema = yup.object({
   name: yup.string().required('Informe o nome.'),
-  password: yup.string().required('Informe a senha.'),
-  newPassword: yup.string().required('Informe a nova senha.'),
-  newPassword_confirm: yup.string().required('A confirmação da senha não confere')
+  email: yup.string(),
+  password: yup.string(),
+  newPassword: yup
+    .string()
+    .min(6, 'A senha deve ter pelo menos 6 dígitos.')
+    .nullable()
+    .transform((value) => !!value ? value : null)
+  ,
+  newPassword_confirm: yup
+    .string()
+    .nullable().transform((value) => !!value ? value : null)
+    .oneOf([yup.ref('newPassword')], 'A confirmação de senha não confere.')
+  ,
 })
 
 export function Profile(){
