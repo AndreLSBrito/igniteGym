@@ -35,8 +35,16 @@ const profileSchema = yup.object({
   ,
   newPassword_confirm: yup
     .string()
-    .nullable().transform((value) => !!value ? value : null)
+    .nullable()
+    .transform((value) => !!value ? value : null)
     .oneOf([yup.ref('newPassword')], 'A confirmação de senha não confere.')
+    .when('newPassword',{
+      is: (Field: any) => Field,
+      then: (schema) =>	schema
+        .nullable()
+        .required('Informe a confirmação da senha.')
+        .transform((value) => !!value ? value : null)
+    })
   ,
 })
 
