@@ -4,11 +4,22 @@ import { HStack, Heading, Text, VStack, Icon } from 'native-base';
 
 import { UserPhoto } from './UserPhoto';
 
+import { useAuth } from '@hooks/useAuth';
+
+import defautUserPhotImg from '@assets/userPhotoDefault.png'
+import { api } from '@services/api';
+
 export function HomeHeader(){
+  const {user, signOut} = useAuth()
+
   return(
     <HStack bg="gray.600" pt={16} pb={5} px={8} alignItems="center">
       <UserPhoto 
-        source={{ uri: 'https://github.com/Tiotedd.png' }}
+        source={
+          user.avatar 
+          ? { uri: `${api.defaults.baseURL}/avatar/${user.avatar}`} 
+          : defautUserPhotImg 
+        }
         alt="Imagem do usuário"
         size={16}
         mr={4}  
@@ -20,7 +31,7 @@ export function HomeHeader(){
         </Text>
 
         <Heading color="gray.100" fontSize="md" fontFamily="heading">
-          André
+          {user.name}
         </Heading>
       </VStack>
 
@@ -30,6 +41,7 @@ export function HomeHeader(){
           name="logout" 
           color="gray.200"
           size={7}
+          onPress={signOut}
         />
 
       </TouchableOpacity>
